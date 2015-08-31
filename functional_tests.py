@@ -27,15 +27,16 @@ class NewVisitorTest( unittest.TestCase):
         )
 
         # she type "buy Something" into a text box when she hits enter
-        input.send_keys('Buy peacock feathers')
+        inputbox.send_keys('Buy peacock feathers')
 
         # the page updates, and now the page lists
         # "1. buy something"
         inputbox.send_keys(Keys.ENTER)
 
-        table = self.broswer.find_element_by_id('id_list_table')
+        table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(any(row.text == '1: Buy peacock feathers' for row in rows)
+        self.assertTrue(any(row.text == '1: Buy peacock feathers' for row in rows),
+        "new to-do item did not appear in table"
         )
         # there is still a text box inviting her to add another. She
         # enters " use purchased item"
