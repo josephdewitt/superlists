@@ -35,15 +35,34 @@ class NewVisitorTest( unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(any(row.text == '1: Buy peacock feathers' for row in rows),
-        "new to-do item did not appear in table"
-        )
+
+#        self.assertIn('1: Buy peacock feathers', [row.text for row in rows])
+
+#        self.assertTrue(
+#            any(row.text == '1: Buy peacock feathers' for row in rows),
+#            "New to-do item did not appear in table -- its text was:\n%s" % (table.text,
+#            )
+#        )
         # there is still a text box inviting her to add another. She
-        # enters " use purchased item"
-        self.fail('Finish the test')
+        # enters " use peacock feathers to make a fly"
+
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('use peacock feathers to make a fly')
+        inputbox.send_keys(Keys.ENTER)
+
+
 
 # the page updates again, and now both items are on her list
+
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+
+        self.assertIn('1. Buy peacock feathers', [row.text for row in rows])
+        self.assertIn('2: use peacock feathers to make a fly' , [row.text for row in rows])
+
 # The site generated a unique URL for her -- there is text explaining tthe URL
+
+        self.fail('Finish the test')
 # She visits the URL - her To-Do lost is still there.
 #
 if __name__ == '__main__':
