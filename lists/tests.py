@@ -19,38 +19,6 @@ class HomePageTest(TestCase):
         expected_html = render_to_string('home.html')
         self.assertEqual(response.content.decode(), expected_html)
 
-        #self.assertTrue(response.content.startswith(b'<html>'))
-        #self.assertIn(b'<title>To-Do lists</title>', response.content)
-        #self.assertTrue(response.content.endswith(b'</html>'))
-
-    def test_home_page_can_save_a_POST_request(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'a new list item'
-
-        response = home_page(request)
-
-        self.assertEqual(Item.objects.count(),1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, 'a new list item')
-
-    def test_home_page_redirect_after_POST(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'a new list item'
-
-        response = home_page(request)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/lists/the_only_list_in_the_world/')
-
-
-
-    def test_home_page_only_saves_items_when_necessary(self):
-        request = HttpRequest()
-        home_page(request)
-        self.assertEqual(Item.objects.count(),0)
-
 
 class ItemModelTest(TestCase):
 
@@ -86,4 +54,20 @@ class LiveViewTest(TestCase):
         response = self.client.get('/lists/the_only_list_in_the_world/')
 
         self.assertTemplateUsed(response, 'list.html')
+
+class NewListTest(TestCase):
+
+    def test_can_save_a_POST_request(self):
+        self.client.post('/lists/new', data={'item_text': 'a new list item'})
+
+        self.assertEqual(Item.objects.count(),1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, 'a new list item')
+
+    def test_redirect_after_POST(self):
+        response = self.client.post('/lists/new', data={'item_text': 'a new list item'}
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/lists/the_only_list_in_the_world/')
 
